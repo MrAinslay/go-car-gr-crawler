@@ -26,11 +26,19 @@ func Scrape(url string) {
 
 	c.OnHTML("a", func(e *colly.HTMLElement) {
 		// printing all URLs associated with the a links in the page
-		fmt.Println("%v", e.Attr("href"))
+		fmt.Printf("%v\n", e.Attr("href"))
 	})
 
 	c.OnScraped(func(r *colly.Response) {
 		fmt.Println(r.Request.URL, " scraped!")
+	})
+
+	var posts []Post
+	c.OnHTML("li", func(h *colly.HTMLElement) {
+		carPost := Post{}
+
+		carPost.URL = h.ChildAttr("a", "href")
+		carPost.Name = h.ChildText("h2")
 	})
 
 }
