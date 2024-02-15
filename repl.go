@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
+	"os"
 	"strings"
 
 	"github.com/MrAinslay/go-car-gr-crawler/internal/client"
@@ -9,7 +12,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(c client.Client, s string) error
+	callback    func(c client.Client, args []string) error
 }
 
 func cleanInput(s string) string {
@@ -18,8 +21,22 @@ func cleanInput(s string) string {
 	return output
 }
 
-func startRepl(c client.Client) {
+func printPrompt() {
+	fmt.Println("Car-gr Scraper > ")
+}
 
+func startRepl(c client.Client) {
+	commands := getCommands()
+
+	reader := bufio.NewScanner(os.Stdin)
+	printPrompt()
+	for reader.Scan() {
+		text := cleanInput(reader.Text())
+		splitText := strings.Split(text, " ")
+		if command, exists := commands[splitText[0]]; exists {
+			err := command.callback(splitText[1:])
+		}
+	}
 }
 
 func getCommands() map[string]cliCommand {

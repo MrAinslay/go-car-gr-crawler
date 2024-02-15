@@ -6,7 +6,7 @@ import (
 	"github.com/MrAinslay/go-car-gr-crawler/internal/client"
 )
 
-func commandHelp(c client.Client, s string) error {
+func commandHelp(c client.Client, args []string) error {
 	commands := getCommands()
 	fmt.Println("A list of all commands")
 	for _, cmd := range commands {
