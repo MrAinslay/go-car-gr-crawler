@@ -21,7 +21,7 @@ func processNode(n *html.Node) {
 	case "h2":
 		if n.FirstChild != nil && n.FirstChild.Type == html.TextNode {
 			name := n.FirstChild.Data
-			fmt.Println("Name:", strings.TrimSpace(name))
+			fmt.Println("\nName:", strings.TrimSpace(name))
 		}
 	case "span":
 		for _, a := range n.Attr {
@@ -36,7 +36,9 @@ func processNode(n *html.Node) {
 				if price != "" {
 					fmt.Println("Price:", price)
 				}
+
 			case "title":
+				fmt.Println("here")
 				switch a.Val {
 				case "Χρονολογία":
 					for c := n.FirstChild; c != nil; c = c.NextSibling {
@@ -77,14 +79,13 @@ func processNode(n *html.Node) {
 				}
 			}
 		}
-	/*case "img":
-	for _, a := range n.Attr {
-		if a.Key == "src" {
-			ImageURL := a.Val
-			fmt.Println("Image URL:", ImageURL)
+	case "img":
+		for _, a := range n.Attr {
+			if a.Key == "src" {
+				ImageURL := a.Val
+				fmt.Println("Image URL:", ImageURL)
+			}
 		}
-	}*/
-	default:
 	}
 
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
