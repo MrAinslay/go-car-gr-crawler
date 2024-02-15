@@ -18,16 +18,16 @@ func ProcessAll(n *html.Node) {
 
 func processNode(n *html.Node) {
 	switch n.Data {
+	case "h2":
+		if n.FirstChild != nil && n.FirstChild.Type == html.TextNode {
+			name := n.FirstChild.Data
+			fmt.Println("\nName:", strings.TrimSpace(name))
+		}
 	case "a":
 		for _, a := range n.Attr {
 			if a.Key == "href" {
 				fmt.Println("Link:", a.Val)
 			}
-		}
-	case "h2":
-		if n.FirstChild != nil && n.FirstChild.Type == html.TextNode {
-			name := n.FirstChild.Data
-			fmt.Println("\nName:", strings.TrimSpace(name))
 		}
 	case "span":
 		for _, a := range n.Attr {
