@@ -33,7 +33,9 @@ func processNode(n *html.Node) {
 						price += c.FirstChild.Data
 					}
 				}
-				fmt.Println("Price:", price)
+				if price != "" {
+					fmt.Println("Price:", price)
+				}
 			case "title":
 				switch a.Val {
 				case "Χρονολογία":
