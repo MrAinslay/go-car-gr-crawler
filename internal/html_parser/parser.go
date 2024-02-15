@@ -26,7 +26,9 @@ func processNode(n *html.Node) {
 	case "a":
 		for _, a := range n.Attr {
 			if a.Key == "href" {
-				fmt.Printf("Link: https://car.gr%s\n", a.Val)
+				if a.Val != "/" && !strings.Contains(a.Val, "quick-search") && !strings.Contains(a.Val, "from-promotion") {
+					fmt.Printf("Link: https://car.gr%s\n", a.Val)
+				}
 			}
 		}
 	case "span":
@@ -87,7 +89,7 @@ func processNode(n *html.Node) {
 		for _, a := range n.Attr {
 			if a.Key == "src" {
 				ImageURL := a.Val
-				if ImageURL != "https://static-cz.car.gr/_nuxt/img/default_preview.fc475ab.png" {
+				if ImageURL != "https://static-cz.car.gr/_nuxt/img/default_preview.fc475ab.png" && ImageURL != "https://static-cz.car.gr/users/10156122/7vbod3813v.jpeg" {
 					fmt.Println("Image URL:", ImageURL)
 				}
 			}
