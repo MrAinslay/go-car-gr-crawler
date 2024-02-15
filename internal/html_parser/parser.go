@@ -18,6 +18,12 @@ func ProcessAll(n *html.Node) {
 
 func processNode(n *html.Node) {
 	switch n.Data {
+	case "a":
+		for _, a := range n.Attr {
+			if a.Key == "href" {
+				fmt.Println("Link:", a.Val)
+			}
+		}
 	case "h2":
 		if n.FirstChild != nil && n.FirstChild.Type == html.TextNode {
 			name := n.FirstChild.Data
@@ -36,9 +42,7 @@ func processNode(n *html.Node) {
 				if price != "" {
 					fmt.Println("Price:", price)
 				}
-
 			case "title":
-				fmt.Println("here")
 				switch a.Val {
 				case "Χρονολογία":
 					for c := n.FirstChild; c != nil; c = c.NextSibling {
@@ -46,35 +50,35 @@ func processNode(n *html.Node) {
 							fmt.Println("Date:", c.Data)
 						}
 					}
-				}
-			case "Χιλιόμετρα":
-				for c := n.FirstChild; c != nil; c = c.NextSibling {
-					if c.Type == html.TextNode {
-						fmt.Println("Kilometers:", c.Data)
+				case "Χιλιόμετρα":
+					for c := n.FirstChild; c != nil; c = c.NextSibling {
+						if c.Type == html.TextNode {
+							fmt.Println("Kilometers:", c.Data)
+						}
 					}
-				}
-			case "Κυβικά":
-				for c := n.FirstChild; c != nil; c = c.NextSibling {
-					if c.Type == html.TextNode {
-						fmt.Println("CC:", c.Data)
+				case "Κυβικά":
+					for c := n.FirstChild; c != nil; c = c.NextSibling {
+						if c.Type == html.TextNode {
+							fmt.Println("CC:", c.Data)
+						}
 					}
-				}
-			case "Ίπποι":
-				for c := n.FirstChild; c != nil; c = c.NextSibling {
-					if c.Type == html.TextNode {
-						fmt.Println("Horsepower:", c.Data)
+				case "Ίπποι":
+					for c := n.FirstChild; c != nil; c = c.NextSibling {
+						if c.Type == html.TextNode {
+							fmt.Println("Horsepower:", c.Data)
+						}
 					}
-				}
-			case "Σασμάν":
-				for c := n.FirstChild; c != nil; c = c.NextSibling {
-					if c.Type == html.TextNode {
-						fmt.Println("Transmission:", c.Data)
+				case "Σασμάν":
+					for c := n.FirstChild; c != nil; c = c.NextSibling {
+						if c.Type == html.TextNode {
+							fmt.Println("Transmission:", c.Data)
+						}
 					}
-				}
-			case "Καύσιμο":
-				for c := n.FirstChild; c != nil; c = c.NextSibling {
-					if c.Type == html.TextNode {
-						fmt.Println("Fuel:", c.Data)
+				case "Καύσιμο":
+					for c := n.FirstChild; c != nil; c = c.NextSibling {
+						if c.Type == html.TextNode {
+							fmt.Println("Fuel:", c.Data)
+						}
 					}
 				}
 			}
@@ -83,7 +87,9 @@ func processNode(n *html.Node) {
 		for _, a := range n.Attr {
 			if a.Key == "src" {
 				ImageURL := a.Val
-				fmt.Println("Image URL:", ImageURL)
+				if ImageURL != "https://static-cz.car.gr/_nuxt/img/default_preview.fc475ab.png" {
+					fmt.Println("Image URL:", ImageURL)
+				}
 			}
 		}
 	}
