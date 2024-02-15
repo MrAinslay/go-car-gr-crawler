@@ -21,3 +21,12 @@ func cleanInput(s string) string {
 func startRepl(c client.Client) {
 
 }
+
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+		},
+	}
+}
