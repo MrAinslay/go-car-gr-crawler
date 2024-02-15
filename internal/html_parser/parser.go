@@ -26,7 +26,7 @@ func processNode(n *html.Node) {
 	case "a":
 		for _, a := range n.Attr {
 			if a.Key == "href" {
-				fmt.Println("Link:", a.Val)
+				fmt.Printf("Link: https://car.gr%s\n", a.Val)
 			}
 		}
 	case "span":
