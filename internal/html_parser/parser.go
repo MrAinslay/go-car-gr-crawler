@@ -88,9 +88,9 @@ func processNode(n *html.Node) {
 	case "img":
 		for _, a := range n.Attr {
 			if a.Key == "src" {
-				ImageURL := a.Val
-				if ImageURL != "https://static-cz.car.gr/_nuxt/img/default_preview.fc475ab.png" && ImageURL != "https://static-cz.car.gr/users/10156122/7vbod3813v.jpeg" {
-					fmt.Println("Image URL:", ImageURL)
+				imageURL := a.Val
+				if imageURL != "https://static-cz.car.gr/_nuxt/img/default_preview.fc475ab.png" && imageURL != "https://static-cz.car.gr/users/10156122/7vbod3813v.jpeg" {
+					fmt.Println("Image URL:", imageURL)
 				}
 			}
 		}

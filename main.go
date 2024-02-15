@@ -13,4 +13,5 @@ func main() {
 
 	client := client.New(time.Duration(*timeout) * time.Second)
 	client.GetCarPosts("audi", "200000", "pra")
+	startRepl(client)
 }
