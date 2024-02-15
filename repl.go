@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -34,7 +35,10 @@ func startRepl(c client.Client) {
 		text := cleanInput(reader.Text())
 		splitText := strings.Split(text, " ")
 		if command, exists := commands[splitText[0]]; exists {
-			err := command.callback(splitText[1:])
+			err := command.callback(c, splitText[1:])
+			if err != nil {
+				log.Printf("err: %v", err)
+			}
 		}
 	}
 }
