@@ -37,8 +37,18 @@ func Scrape(url string) {
 	c.OnHTML("li", func(h *colly.HTMLElement) {
 		carPost := Post{}
 
-		carPost.URL = h.ChildAttr("a", "href")
 		carPost.Name = h.ChildText("h2")
+		carPost.URL = h.ChildAttr("a", "href")
+		h.ForEachWithBreak("span", func(i int, n *colly.HTMLElement) bool {
+			if n.Attr("data-v-f1dc9bb4") != "" {
+				carPost.Price += n.ChildText("span")
+				return false
+			}
+			if n.Attr("") == "" {
+
+			}
+			return true
+		})
 	})
 
 }
