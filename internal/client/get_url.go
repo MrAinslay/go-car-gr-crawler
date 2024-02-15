@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	baseURL = "https://www.car.gr/used-cars/audi/"
+	baseURL = "https://www.car.gr/used-cars/"
 )
 
 func getUrl(args ...string) (url string, err error) {
@@ -24,14 +24,14 @@ func getUrl(args ...string) (url string, err error) {
 			err = nil
 			mileage = 150000
 		}
-		url = fmt.Sprintf("%s%s.hmtl?activeq=%s&category=15001&from_suggester=10&make=14093&mileage-to=%d&offer_type=sale&pg=1&sort=pra", baseURL, args[0], args[0], mileage)
+		url = fmt.Sprintf("%s%s.html?activeq=%s&category=15001&from_suggester=10&make=14093&mileage-to=%d&offer_type=sale&pg=1&sort=pra", baseURL, args[0], args[0], mileage)
 	case 3:
 		mileage, err := strconv.Atoi(args[1])
 		if err != nil {
 			err = nil
 			mileage = 150000
 		}
-		url = fmt.Sprintf("%s%s.hmtl?activeq=%s&category=15001&from_suggester=10&make=14093&mileage-to=%d&offer_type=sale&pg=1&sort=%s", baseURL, args[0], args[0], mileage, args[2])
+		url = fmt.Sprintf("%s%s.html?activeq=%s&category=15001&from_suggester=10&make=14093&mileage-to=%d&offer_type=sale&pg=1&sort=%s", baseURL, args[0], args[0], mileage, args[2])
 	default:
 		err = errors.New("too many arguments")
 	}

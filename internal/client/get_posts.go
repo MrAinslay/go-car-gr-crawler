@@ -1,6 +1,7 @@
 package client
 
 import (
+	"log"
 	"net/http"
 
 	htmlparser "github.com/MrAinslay/go-car-gr-crawler/internal/html_parser"
@@ -12,7 +13,7 @@ func (c *Client) GetCarPosts(searchQuery string, mileage string, sorting string)
 	if err != nil {
 		return err
 	}
-
+	log.Println(url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
