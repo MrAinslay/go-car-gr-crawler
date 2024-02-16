@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -36,6 +37,20 @@ func GetUrl(page string, args ...string) (url string, err error) {
 			mileage = 150000
 		}
 		url = fmt.Sprintf("%s%s.html?activeq=%s&mileage-to=%d&offer_type=sale&pg=%s&sort=%s", baseURL, args[0], args[0], mileage, page, args[2])
+	case 4:
+		mileage, err := strconv.Atoi(args[1])
+		if err != nil {
+			err = nil
+			mileage = 150000
+		}
+
+		for _, arg := range args {
+			if strings.Contains(arg, "limit=") {
+				url = fmt.Sprintf("%s%s.html?activeq=%s&mileage-to=%d&offer_type=sale&pg=%s&sort=%s", baseURL, args[0], args[0], mileage, page, args[2])
+			}
+		}
+		err = errors.New("too many arguments")
+		_ = err
 	default:
 		err = errors.New("too many arguments")
 	}
