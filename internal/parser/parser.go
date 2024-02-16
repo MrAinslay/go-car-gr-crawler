@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -35,7 +36,7 @@ func Parse(url string) error {
 	)
 
 	c.OnHTML("ol.list-unstyled.rows-container.mt-2.list.gallery-lg-4-per-row li", func(h *colly.HTMLElement) {
-		formatTextToStruct(h)
+		saveResults(formatTextToStruct(h))
 	})
 
 	if err := c.Visit(url); err != nil {
@@ -105,4 +106,31 @@ func formatTextToStruct(h *colly.HTMLElement) VehicleListing {
 		Fuel:         res["fuel"],
 		Transmission: res["transmission"],
 	}
+}
+
+func saveResults(vehicle VehicleListing) error {
+	writer, err := os.OpenFile("results.json", os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		return err
+	}
+
+	dat, err := os.ReadFile("results.json")
+	if err != nil {
+		return err
+	}
+
+	vehicles := []VehicleListing{}
+	if err := json.Unmarshal(dat, &vehicles); err != nil {
+		return err
+	}
+
+	vehicles = append(vehicles, vehicle)
+	newDat, err := json.Marshal(vehicles)
+	if err != nil {
+		return err
+	}
+
+	_, err = writer.Write(newDat)
+	defer writer.Close()
+	return err
 }
