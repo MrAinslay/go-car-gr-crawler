@@ -13,15 +13,15 @@ import (
 
 type VehicleListing struct {
 	Name         string `json:"name"`
-	Price        string `json:"price"`
+	Location     string `json:"location"`
 	Link         string `json:"link"`
+	Price        string `json:"price"`
+	Date         string `json:"date"`
 	Mileage      string `json:"mileage"`
-	CC           string `json:"cc"`
 	Horsepower   string `json:"horsepower"`
+	CC           string `json:"cc"`
 	Transmission string `json:"transmission"`
 	Fuel         string `json:"fuel"`
-	Date         string `json:"date"`
-	Location     string `json:"location"`
 }
 
 type VehicleListingMap struct {
@@ -110,7 +110,7 @@ func formatTextToStruct(h *colly.HTMLElement) VehicleListing {
 	}
 	res["link"] = fmt.Sprintf("https://www.car.gr%s", h.ChildAttr("a", "href"))
 
-	return VehicleListing{
+	listing := VehicleListing{
 		Name:         res["name"],
 		Link:         res["link"],
 		Location:     res["location"],
@@ -122,6 +122,31 @@ func formatTextToStruct(h *colly.HTMLElement) VehicleListing {
 		Fuel:         res["fuel"],
 		Transmission: res["transmission"],
 	}
+
+	switch {
+	case listing.Name == "":
+		listing.Name = "N/A"
+	case listing.Link == "":
+		listing.Link = "N/A"
+	case listing.Location == "":
+		listing.Location = "N/A"
+	case listing.Date == "":
+		listing.Date = "N/A"
+	case listing.Horsepower == "":
+		listing.Horsepower = "N/A"
+	case listing.Mileage == "":
+		listing.Mileage = "N/A"
+	case listing.Price == "":
+		listing.Price = "N/A"
+	case listing.Fuel == "":
+		listing.Fuel = "N/A"
+	case listing.CC == "":
+		listing.CC = "N/A"
+	case listing.Transmission == "":
+		listing.Transmission = "N/A"
+	}
+
+	return listing
 }
 
 func saveResults(vehicle VehicleListing) error {
