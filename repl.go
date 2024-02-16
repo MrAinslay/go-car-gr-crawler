@@ -60,7 +60,7 @@ func getCommands() map[string]cliCommand {
 		},
 		"get": {
 			name:        "get",
-			description: "Displays all the listings in the first page\nUsage: get <CAR_NAME> <MILEAGE> <ORDER_BY> - mileage and order by are optional",
+			description: "Saves all the listings found in pages\nUsage: get <CAR_NAME> <MILEAGE> <ORDER_BY> <limit=<LIMIT>> - mileage, limit and order by are optional",
 			callback:    commandGet,
 		},
 		"clear": {
