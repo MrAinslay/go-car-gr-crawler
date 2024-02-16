@@ -21,6 +21,7 @@ outer:
 				return err
 			}
 			file.WriteString("{}")
+			fmt.Println("Successfully cleared results file")
 			break outer
 		case "n", "no":
 			break outer
