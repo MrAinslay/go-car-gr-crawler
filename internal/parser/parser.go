@@ -41,6 +41,14 @@ func Parse(url string) error {
 		colly.MaxDepth(2),
 	)
 
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Printf("Visiting url: %s", url)
+	})
+
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Printf("err: %v", err)
+	})
+
 	c.OnHTML("ol.list-unstyled.rows-container.mt-2.list.gallery-lg-4-per-row li", func(h *colly.HTMLElement) {
 		if err := saveResults(formatTextToStruct(h)); err != nil {
 			log.Println(err)
