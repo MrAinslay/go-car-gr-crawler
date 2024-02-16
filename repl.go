@@ -63,5 +63,10 @@ func getCommands() map[string]cliCommand {
 			description: "Displays all the listings in the first page\nUsage: get <CAR_NAME> <MILEAGE> <ORDER_BY> - mileage and order by are optional",
 			callback:    commandGet,
 		},
+		"clear": {
+			name:        "clear",
+			description: "Clears the results file",
+			callback:    commandClear,
+		},
 	}
 }
