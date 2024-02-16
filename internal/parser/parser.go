@@ -23,7 +23,7 @@ type VehicleListing struct {
 }
 
 func Parse(url string) error {
-	writer, err := os.OpenFile("collector.log", os.O_RDWR|os.O_CREATE, 0666)
+	writer, err := os.OpenFile("log/collector.log", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
