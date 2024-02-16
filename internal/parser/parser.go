@@ -3,6 +3,7 @@ package parser
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -24,6 +25,7 @@ type VehicleListing struct {
 }
 
 func Parse(url string) error {
+	os.Create("log")
 	writer, err := os.OpenFile("log/collector.log", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return err
@@ -36,7 +38,9 @@ func Parse(url string) error {
 	)
 
 	c.OnHTML("ol.list-unstyled.rows-container.mt-2.list.gallery-lg-4-per-row li", func(h *colly.HTMLElement) {
-		saveResults(formatTextToStruct(h))
+		if err := saveResults(formatTextToStruct(h)); err != nil {
+			log.Println(err)
+		}
 	})
 
 	if err := c.Visit(url); err != nil {
@@ -117,6 +121,10 @@ func saveResults(vehicle VehicleListing) error {
 	dat, err := os.ReadFile("results.json")
 	if err != nil {
 		return err
+	}
+
+	if string(dat) == "" {
+		writer.WriteString("[]")
 	}
 
 	vehicles := []VehicleListing{}
