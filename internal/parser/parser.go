@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -22,10 +21,10 @@ type VehicleListing struct {
 	Date         string
 }
 
-func Parse() {
+func Parse(url string) error {
 	writer, err := os.OpenFile("collector.log", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	c := colly.NewCollector(
@@ -39,9 +38,10 @@ func Parse() {
 		fmt.Println(vehicleDetails)
 	})
 
-	if err := c.Visit("https://www.car.gr/classifieds/bikes/?activeq=audi&category=15002&from_suggester=1&q=audi"); err != nil {
-		log.Println(err)
+	if err := c.Visit(url); err != nil {
+		return err
 	}
+	return nil
 }
 
 func formatText(h *colly.HTMLElement) []string {
