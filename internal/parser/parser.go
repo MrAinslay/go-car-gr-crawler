@@ -35,7 +35,18 @@ func Parse(url string) error {
 	)
 
 	c.OnHTML("ol.list-unstyled.rows-container.mt-2.list.gallery-lg-4-per-row li", func(h *colly.HTMLElement) {
-		formatTextToStruct(h)
+		vehicle := formatTextToStruct(h)
+		fmt.Printf("Name: %s\nLocation: %s\nDate: %s\nPrice: %s\nMileage: %s\nCC: %s\nHorsepower: %s\nFuel: %s\nLink: %s\n\n",
+			vehicle.Name,
+			vehicle.Location,
+			vehicle.Date,
+			vehicle.Price,
+			vehicle.Mileage,
+			vehicle.CC,
+			vehicle.Horsepower,
+			vehicle.Fuel,
+			vehicle.Link,
+		)
 	})
 
 	if err := c.Visit(url); err != nil {
@@ -47,6 +58,7 @@ func Parse(url string) error {
 func formatTextToStruct(h *colly.HTMLElement) VehicleListing {
 	splitString := strings.Split(h.DOM.Text(), "\n")
 	result := []string{}
+	res := map[string]string{}
 	for i, line := range splitString {
 		if strings.Contains(splitString[i], "χλμ") {
 			features := strings.Split(splitString[i], ",")
@@ -55,25 +67,43 @@ func formatTextToStruct(h *colly.HTMLElement) VehicleListing {
 			}
 			splitString[i] = ""
 
-			splitString = append(splitString, features...)
+			for _, feature := range features {
+				switch {
+				case strings.Contains(feature, "cc"):
+					res["cc"] = feature
+				case strings.Contains(feature, "bhp"):
+					res["horsepower"] = feature
+				case strings.Contains(feature, " χλμ"):
+					res["mileage"] = feature
+				case strings.Contains(feature, "/"):
+					res["date"] = feature
+				default:
+					res["fuel"] = feature
+				}
+			}
 		} else {
 			splitString[i] = strings.TrimSpace(line)
 		}
 	}
+
+	i := 0
 	for _, line := range splitString {
-		if line != "" && !strings.Contains(line, " / ") && !strings.Contains(line, "%") && !strings.Contains(line, "(Συζητήσιμη)") {
-			result = append(result, line)
+		if line != "" && !strings.Contains(line, " / ") && !strings.Contains(line, "%") && !strings.Contains(line, "(Συζητήσιμη)") && !strings.Contains(line, "Με ζημιά") {
+			switch i {
+			case 0:
+				res["name"] = line
+			case 1:
+				res["price"] = line
+			case 2:
+				res["location"] = line
+			}
+			i++
 		}
 	}
-	result = append(result, fmt.Sprintf("https://www.car.gr%s", h.ChildAttr("a", "href")))
+	res["link"] = fmt.Sprintf("https://www.car.gr%s", h.ChildAttr("a", "href"))
 
 	return VehicleListing{
-		Name:       result[0],
-		Price:      result[1],
-		Mileage:    result[2],
-		CC:         result[3],
-		Horsepower: result[4],
-		Fuel:       result[5],
-		Link:       result[len(result)-1],
+		Name: res["name"],
+		Link: res["link"],
 	}
 }
