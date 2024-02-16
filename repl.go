@@ -13,7 +13,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(c client.Client, args []string) error
+	callback    func(c client.Client, args ...string) error
 }
 
 func cleanInput(s string) string {
@@ -23,7 +23,7 @@ func cleanInput(s string) string {
 }
 
 func printPrompt() {
-	fmt.Println("Car-gr Scraper > ")
+	fmt.Print("Car-gr Scraper > ")
 }
 
 func startRepl(c client.Client) {
@@ -35,11 +35,13 @@ func startRepl(c client.Client) {
 		text := cleanInput(reader.Text())
 		splitText := strings.Split(text, " ")
 		if command, exists := commands[splitText[0]]; exists {
-			err := command.callback(c, splitText[1:])
+			err := command.callback(c, splitText[1:]...)
 			if err != nil {
 				log.Printf("err: %v", err)
 			}
 		}
+		fmt.Println("Unknown command\nUse command help for help")
+		printPrompt()
 	}
 }
 
@@ -49,6 +51,16 @@ func getCommands() map[string]cliCommand {
 			name:        "help",
 			description: "Displays a help message",
 			callback:    commandHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exits the CLI",
+			callback:    commandExit,
+		},
+		"get": {
+			name:        "get",
+			description: "Displays all the listings in the first page\nUsage: get <CAR_NAME> <MILEAGE> <ORDER_BY> - mileage and order by are optional",
+			callback:    commandGet,
 		},
 	}
 }
