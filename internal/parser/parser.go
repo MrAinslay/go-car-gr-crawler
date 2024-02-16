@@ -12,16 +12,20 @@ import (
 )
 
 type VehicleListing struct {
-	Name         string
-	Price        string
-	Link         string
-	Mileage      string
-	CC           string
-	Horsepower   string
-	Transmission string
-	Fuel         string
-	Date         string
-	Location     string
+	Name         string `json:"name"`
+	Price        string `json:"price"`
+	Link         string `json:"link"`
+	Mileage      string `json:"mileage"`
+	CC           string `json:"cc"`
+	Horsepower   string `json:"horsepower"`
+	Transmission string `json:"transmission"`
+	Fuel         string `json:"fuel"`
+	Date         string `json:"date"`
+	Location     string `json:"location"`
+}
+
+type VehicleListingMap struct {
+	Listings map[int]VehicleListing `json:"listing"`
 }
 
 func Parse(url string) error {
@@ -127,13 +131,19 @@ func saveResults(vehicle VehicleListing) error {
 		writer.WriteString("[]")
 	}
 
-	vehicles := []VehicleListing{}
-	if err := json.Unmarshal(dat, &vehicles); err != nil {
+	vehicles := VehicleListingMap{Listings: map[int]VehicleListing{}}
+	if err := json.Unmarshal(dat, &vehicles.Listings); err != nil {
 		return err
 	}
 
-	vehicles = append(vehicles, vehicle)
-	newDat, err := json.Marshal(vehicles)
+	for _, vch := range vehicles.Listings {
+		if vch.Link == vehicle.Link {
+			return nil
+		}
+	}
+
+	vehicles.Listings[len(vehicles.Listings)] = vehicle
+	newDat, err := json.Marshal(vehicles.Listings)
 	if err != nil {
 		return err
 	}
