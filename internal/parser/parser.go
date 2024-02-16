@@ -13,12 +13,13 @@ type VehicleListing struct {
 	Name         string
 	Price        string
 	Link         string
-	ImageURL     string
 	Mileage      string
 	CC           string
+	Horsepower   string
 	Transmission string
 	Fuel         string
 	Date         string
+	Location     string
 }
 
 func Parse(url string) error {
@@ -34,8 +35,7 @@ func Parse(url string) error {
 	)
 
 	c.OnHTML("ol.list-unstyled.rows-container.mt-2.list.gallery-lg-4-per-row li", func(h *colly.HTMLElement) {
-		vehicleDetails := formatText(h)
-		fmt.Println(vehicleDetails)
+		formatTextToStruct(h)
 	})
 
 	if err := c.Visit(url); err != nil {
@@ -44,8 +44,9 @@ func Parse(url string) error {
 	return nil
 }
 
-func formatText(h *colly.HTMLElement) []string {
+func formatTextToStruct(h *colly.HTMLElement) VehicleListing {
 	splitString := strings.Split(h.DOM.Text(), "\n")
+	result := []string{}
 	for i, line := range splitString {
 		if strings.Contains(splitString[i], "χλμ") {
 			features := strings.Split(splitString[i], ",")
@@ -55,8 +56,24 @@ func formatText(h *colly.HTMLElement) []string {
 			splitString[i] = ""
 
 			splitString = append(splitString, features...)
+		} else {
+			splitString[i] = strings.TrimSpace(line)
 		}
-		splitString[i] = strings.TrimSpace(line)
 	}
-	return splitString
+	for _, line := range splitString {
+		if line != "" && !strings.Contains(line, " / ") && !strings.Contains(line, "%") && !strings.Contains(line, "(Συζητήσιμη)") {
+			result = append(result, line)
+		}
+	}
+	result = append(result, fmt.Sprintf("https://www.car.gr%s", h.ChildAttr("a", "href")))
+
+	return VehicleListing{
+		Name:       result[0],
+		Price:      result[1],
+		Mileage:    result[2],
+		CC:         result[3],
+		Horsepower: result[4],
+		Fuel:       result[5],
+		Link:       result[len(result)-1],
+	}
 }

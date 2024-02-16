@@ -39,8 +39,9 @@ func startRepl(c client.Client) {
 			if err != nil {
 				log.Printf("err: %v", err)
 			}
+		} else {
+			fmt.Println("Unknown command\nUse command help for help")
 		}
-		fmt.Println("Unknown command\nUse command help for help")
 		printPrompt()
 	}
 }
