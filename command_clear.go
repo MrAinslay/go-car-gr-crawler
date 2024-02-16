@@ -11,6 +11,7 @@ import (
 func commandClear(c client.Client, args ...string) error {
 	reader := bufio.NewScanner(os.Stdin)
 	fmt.Print("Are you sure you want to DELETE ALL the results [Y]/[N]: ")
+outer:
 	for reader.Scan() {
 		text := cleanInput(reader.Text())
 		switch text {
@@ -20,9 +21,9 @@ func commandClear(c client.Client, args ...string) error {
 				return err
 			}
 			file.WriteString("{}")
-			break
+			break outer
 		case "n", "no":
-			break
+			break outer
 		default:
 			fmt.Print("Invalid response: ")
 		}
