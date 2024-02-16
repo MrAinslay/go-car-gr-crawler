@@ -42,11 +42,11 @@ func Parse(url string) error {
 	)
 
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Printf("Visiting url: %s", url)
+		fmt.Printf("Visiting url: %s\n", url)
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
-		fmt.Printf("err: %v", err)
+		fmt.Printf("err: %v\n", err)
 	})
 
 	c.OnHTML("ol.list-unstyled.rows-container.mt-2.list.gallery-lg-4-per-row li", func(h *colly.HTMLElement) {
