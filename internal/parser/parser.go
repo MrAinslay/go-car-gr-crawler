@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,20 +13,24 @@ import (
 )
 
 type VehicleListing struct {
-	Name         string `json:"name"`
-	Location     string `json:"location"`
-	Link         string `json:"link"`
-	Price        string `json:"price"`
-	Date         string `json:"date"`
-	Mileage      string `json:"mileage"`
-	Horsepower   string `json:"horsepower"`
-	CC           string `json:"cc"`
-	Transmission string `json:"transmission"`
-	Fuel         string `json:"fuel"`
+	Name         string `json:"name" csv:"name"`
+	Location     string `json:"location" csv:"location"`
+	Link         string `json:"link" csv:"link"`
+	Price        string `json:"price" csv:"price"`
+	Date         string `json:"date" csv:"date"`
+	Mileage      string `json:"mileage" csv:"mileage"`
+	Horsepower   string `json:"horsepower" csv:"horsepower"`
+	CC           string `json:"cc" csv:"cc"`
+	Transmission string `json:"transmission" csv:"transmission"`
+	Fuel         string `json:"fuel" csv:"fuel"`
 }
 
 type VehicleListingMap struct {
 	Listings map[int]VehicleListing `json:"listing"`
+}
+
+type VehicleListingCSVMap struct {
+	Listings [][]string
 }
 
 func Parse(url string) error {
@@ -150,14 +155,27 @@ func formatTextToStruct(h *colly.HTMLElement) VehicleListing {
 }
 
 func saveResults(vehicle VehicleListing) error {
-	writer, err := os.OpenFile("results.json", os.O_RDWR|os.O_CREATE, 0666)
+	vehicleMap, err := saveJson(vehicle)
 	if err != nil {
 		return err
 	}
 
+	if err := saveCSV(vehicleMap); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func saveJson(vehicle VehicleListing) (VehicleListingMap, error) {
+	writer, err := os.OpenFile("results.json", os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		return VehicleListingMap{}, err
+	}
+
 	dat, err := os.ReadFile("results.json")
 	if err != nil {
-		return err
+		return VehicleListingMap{}, err
 	}
 
 	if string(dat) == "" {
@@ -166,22 +184,62 @@ func saveResults(vehicle VehicleListing) error {
 
 	vehicles := VehicleListingMap{Listings: map[int]VehicleListing{}}
 	if err := json.Unmarshal(dat, &vehicles.Listings); err != nil {
-		return err
+		return VehicleListingMap{}, err
 	}
 
 	for _, vch := range vehicles.Listings {
 		if vch.Link == vehicle.Link {
-			return nil
+			return VehicleListingMap{}, nil
 		}
 	}
 
 	vehicles.Listings[len(vehicles.Listings)] = vehicle
 	newDat, err := json.Marshal(vehicles.Listings)
 	if err != nil {
-		return err
+		return VehicleListingMap{}, err
 	}
 
 	_, err = writer.Write(newDat)
 	defer writer.Close()
-	return err
+	return vehicles, err
+}
+
+func saveCSV(vehicles VehicleListingMap) error {
+	file, err := os.OpenFile("results.csv", os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		return err
+	}
+
+	csvMap, err := listingsMapToCSV(vehicles)
+	if err != nil {
+		return err
+	}
+
+	writer := csv.NewWriter(file)
+	for _, record := range csvMap.Listings {
+		if err := writer.Write(record); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func listingsMapToCSV(m VehicleListingMap) (VehicleListingCSVMap, error) {
+	result := VehicleListingCSVMap{}
+	for _, vehicle := range m.Listings {
+		newVehicleSlice := make([]string, 10)
+		newVehicleSlice = append(newVehicleSlice,
+			vehicle.Name,
+			vehicle.Location,
+			vehicle.Link,
+			vehicle.Price,
+			vehicle.Date,
+			vehicle.Mileage,
+			vehicle.Horsepower,
+			vehicle.CC, vehicle.Transmission,
+			vehicle.Fuel,
+		)
+		result.Listings = append(result.Listings, newVehicleSlice)
+	}
+	return result, nil
 }

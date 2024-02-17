@@ -16,11 +16,14 @@ outer:
 		text := cleanInput(reader.Text())
 		switch text {
 		case "y", "yes":
-			file, err := os.Open("results.json")
+			os.Remove("results.json")
+			file, err := os.OpenFile("results.json", os.O_RDWR|os.O_CREATE, 0666)
 			if err != nil {
 				return err
 			}
-			file.WriteString("{}")
+			defer file.Close()
+
+			file.Write([]byte("{}"))
 			fmt.Println("Successfully cleared results file")
 			break outer
 		case "n", "no":
