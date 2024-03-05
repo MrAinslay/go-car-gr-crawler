@@ -34,7 +34,7 @@ type VehicleListingCSVMap struct {
 }
 
 func Parse(url string) error {
-	os.Create("log")
+	os.Mkdir("log", os.ModePerm)
 	writer, err := os.OpenFile("log/collector.log", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return err
@@ -163,7 +163,7 @@ func saveResults(vehicle VehicleListing) error {
 	if err := saveCSV(vehicleMap); err != nil {
 		return err
 	}
-
+	fmt.Println("Saved results to results.csv")
 	return nil
 }
 
@@ -200,7 +200,12 @@ func saveJson(vehicle VehicleListing) (VehicleListingMap, error) {
 	}
 
 	_, err = writer.Write(newDat)
+	if err != nil {
+		return VehicleListingMap{}, err
+	}
 	defer writer.Close()
+
+	fmt.Println("Saved results to results.json")
 	return vehicles, err
 }
 
@@ -209,6 +214,7 @@ func saveCSV(vehicles VehicleListingMap) error {
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
 	csvMap, err := listingsMapToCSV(vehicles)
 	if err != nil {
@@ -221,6 +227,7 @@ func saveCSV(vehicles VehicleListingMap) error {
 			return err
 		}
 	}
+
 	return nil
 }
 

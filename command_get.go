@@ -27,7 +27,6 @@ func commandGet(c client.Client, args ...string) error {
 					return err
 				}
 			}
-			fmt.Println("Saved results to results.json")
 			return nil
 		}
 	}
@@ -36,6 +35,5 @@ func commandGet(c client.Client, args ...string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Saved results to results.json")
 	return c.GetCarPosts(url)
 }
